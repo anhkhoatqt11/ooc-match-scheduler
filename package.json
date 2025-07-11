@@ -6,9 +6,17 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "deploy": "node deploy-commands.js",
+    "wrangler:dev": "wrangler dev",
+    "wrangler:deploy": "wrangler deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["discord", "bot", "scheduler", "match", "gaming"],
+  "keywords": [
+    "discord",
+    "bot",
+    "scheduler",
+    "match",
+    "gaming"
+  ],
   "author": "",
   "license": "ISC",
   "description": "Discord bot for scheduling gaming matches with automatic team creation",
@@ -17,6 +25,7 @@
     "dotenv": "^17.2.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "wrangler": "^3.114.11"
   }
 }

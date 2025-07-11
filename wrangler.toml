@@ -1,0 +1,35 @@
+name = "ooc-match-scheduler"
+main = "src/worker.js"
+compatibility_date = "2024-01-01"
+
+[env.production]
+name = "ooc-match-scheduler-prod"
+
+[env.staging]
+name = "ooc-match-scheduler-staging"
+
+# Environment variables (set these using wrangler secret put)
+# DISCORD_TOKEN - Your Discord bot token
+# CLIENT_ID - Your Discord application client ID
+# GUILD_ID - Your Discord guild ID (optional, for guild-specific commands)
+
+# Configure cron triggers if needed for scheduled tasks
+# [[triggers.cron]]
+# cron = "0 0 * * *"  # Run daily at midnight
+# timezone = "UTC"
+
+# Configure KV namespaces for data persistence
+# [[kv_namespaces]]
+# binding = "SCHEDULES"
+# id = "your-kv-namespace-id"
+# preview_id = "your-preview-kv-namespace-id"
+
+# Configure Durable Objects if needed for stateful operations
+# [[durable_objects.bindings]]
+# name = "SCHEDULE_MANAGER"
+# class_name = "ScheduleManager"
+
+# Configure R2 buckets if needed for file storage
+# [[r2_buckets]]
+# binding = "ASSETS"
+# bucket_name = "ooc-match-scheduler-assets"
