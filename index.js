@@ -3,6 +3,13 @@ const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const fs = require('fs');
 const http = require('http');
 
+// Debug environment variables
+console.log('Environment check:');
+console.log('- DISCORD_TOKEN:', process.env.DISCORD_TOKEN ? 'Set' : 'Missing');
+console.log('- CLIENT_ID:', process.env.CLIENT_ID ? 'Set' : 'Missing');
+console.log('- GUILD_ID:', process.env.GUILD_ID ? 'Set' : 'Missing');
+console.log('- PORT:', process.env.PORT || 'Not set (will use 3000)');
+
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions] });
 
 client.commands = new Collection();
@@ -48,6 +55,17 @@ const server = http.createServer((req, res) => {
             bot_status: client.readyAt ? 'connected' : 'connecting',
             guilds: client.guilds ? client.guilds.cache.size : 0,
             ready_at: client.readyAt ? client.readyAt.toISOString() : null,
+            user: client.user ? {
+                id: client.user.id,
+                username: client.user.username,
+                tag: client.user.tag
+            } : null,
+            environment: {
+                node_version: process.version,
+                discord_token_set: !!process.env.DISCORD_TOKEN,
+                client_id_set: !!process.env.CLIENT_ID,
+                guild_id_set: !!process.env.GUILD_ID
+            },
             endpoints: {
                 health: '/health',
                 status: '/'
@@ -75,7 +93,22 @@ client.on('reconnecting', () => {
 });
 
 // Login to Discord
-client.login(process.env.DISCORD_TOKEN).catch(error => {
-    console.error('Failed to login to Discord:', error);
+if (!process.env.DISCORD_TOKEN) {
+    console.error('❌ DISCORD_TOKEN is not set in environment variables!');
+    console.error('Please set the following environment variables in your Render dashboard:');
+    console.error('- DISCORD_TOKEN: Your Discord bot token');
+    console.error('- CLIENT_ID: Your Discord application client ID');
+    console.error('- GUILD_ID: Your Discord guild ID');
     process.exit(1);
-});
+}
+
+console.log('🔑 Attempting to login to Discord...');
+client.login(process.env.DISCORD_TOKEN)
+    .then(() => {
+        console.log('✅ Discord login successful!');
+    })
+    .catch(error => {
+        console.error('❌ Failed to login to Discord:', error);
+        console.error('Check if your DISCORD_TOKEN is correct and the bot has proper permissions.');
+        process.exit(1);
+    });
