@@ -294,12 +294,25 @@ class SlotManager {
         this.activeSchedules.delete(channelId);
     }
 
+    // Fisher-Yates shuffle algorithm để xáo trộn ngẫu nhiên
+    shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
     createMatches(schedule) {
         const matches = [];
         const assignedPlayers = new Set(); // Theo dõi người đã được xếp trận
         
-        // Tạo trận cho từng slot theo thứ tự thời gian
-        schedule.timeSlots.forEach(slot => {
+        // Tạo bản sao của timeSlots và xáo trộn để xử lý ngẫu nhiên
+        const shuffledSlots = [...schedule.timeSlots];
+        this.shuffleArray(shuffledSlots);
+        
+        // Tạo trận cho từng slot theo thứ tự đã xáo trộn
+        shuffledSlots.forEach(slot => {
             const playersInSlot = [];
             
             // Tìm tất cả người chọn slot này và chưa được xếp trận
@@ -310,6 +323,9 @@ class SlotManager {
             });
 
             if (playersInSlot.length > 0) {
+                // Xáo trộn ngẫu nhiên danh sách người chơi
+                this.shuffleArray(playersInSlot);
+                
                 const matchesForSlot = [];
                 
                 // Chia thành các trận 4 người
@@ -330,6 +346,9 @@ class SlotManager {
             }
         });
 
+        // Sắp xếp lại matches theo thứ tự thời gian để hiển thị đúng
+        matches.sort((a, b) => a.slot.sortKey - b.slot.sortKey);
+
         // Xử lý người dư: gộp vào các trận chưa đủ 4 người
         const remainingPlayers = [];
         schedule.participants.forEach((userSlots, userId) => {
@@ -339,16 +358,29 @@ class SlotManager {
         });
 
         if (remainingPlayers.length > 0) {
-            // Tìm các trận chưa đủ 4 người để gộp vào
-            let remainingIndex = 0;
+            // Xáo trộn ngẫu nhiên danh sách người dư
+            this.shuffleArray(remainingPlayers);
             
-            for (let matchGroup of matches) {
-                for (let match of matchGroup.matches) {
-                    while (match.length < 4 && remainingIndex < remainingPlayers.length) {
-                        match.push(remainingPlayers[remainingIndex]);
-                        assignedPlayers.add(remainingPlayers[remainingIndex]);
-                        remainingIndex++;
+            // Tạo danh sách tất cả các trận chưa đủ 4 người
+            const incompleteMatches = [];
+            matches.forEach(matchGroup => {
+                matchGroup.matches.forEach(match => {
+                    if (match.length < 4) {
+                        incompleteMatches.push(match);
                     }
+                });
+            });
+
+            // Xáo trộn thứ tự các trận chưa đủ để phân bổ ngẫu nhiên
+            this.shuffleArray(incompleteMatches);
+            
+            // Gộp người dư vào các trận chưa đủ
+            let remainingIndex = 0;
+            for (let match of incompleteMatches) {
+                while (match.length < 4 && remainingIndex < remainingPlayers.length) {
+                    match.push(remainingPlayers[remainingIndex]);
+                    assignedPlayers.add(remainingPlayers[remainingIndex]);
+                    remainingIndex++;
                 }
             }
 

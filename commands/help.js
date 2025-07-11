@@ -40,7 +40,7 @@ module.exports = {
             .addFields(
                 {
                     name: '📝 Cách Sử Dụng:',
-                    value: '1. Admin dùng `/schedule 15/07/2025` hoặc `/schedule 15/07/2025,16/07/2025` để tạo lịch đấu\n2. **Người chơi có thể chọn nhiều khung giờ** (20h và/hoặc 22h)\n3. Bot tự động chia trận khi hết thời gian\n4. **Mỗi người chỉ được xếp vào 1 trận duy nhất** (ưu tiên khung giờ sớm hơn)\n5. Người dư sẽ được gộp vào các trận chưa đủ 4 người',
+                    value: '1. Admin dùng `/schedule 15/07/2025` hoặc `/schedule 15/07/2025,16/07/2025` để tạo lịch đấu\n2. **Người chơi có thể chọn nhiều khung giờ** (20h và/hoặc 22h)\n3. Bot tự động chia trận khi hết thời gian\n4. **Xếp trận hoàn toàn ngẫu nhiên** - mỗi người chỉ được xếp vào 1 trận\n5. Người dư sẽ được gộp ngẫu nhiên vào các trận chưa đủ 4 người',
                     inline: false
                 },
                 {
@@ -55,7 +55,7 @@ module.exports = {
                 },
                 {
                     name: '🎯 Cơ Chế Xếp Trận:',
-                    value: '• Bạn có thể chọn cả 20h và 22h\n• Bot sẽ ưu tiên xếp bạn vào khung giờ sớm hơn (20h)\n• Một khi đã được xếp trận, bạn sẽ không xuất hiện ở khung giờ khác\n• Đảm bảo công bằng: mỗi người chỉ chơi 1 trận',
+                    value: '• Bạn có thể chọn cả 20h và 22h\n• **Bot xếp trận hoàn toàn ngẫu nhiên** để đảm bảo công bằng\n• Một khi đã được xếp trận, bạn sẽ không xuất hiện ở khung giờ khác\n• Mỗi người chỉ chơi 1 trận, tránh tình trạng ai đó phải chơi nhiều trận',
                     inline: false
                 }
             )
