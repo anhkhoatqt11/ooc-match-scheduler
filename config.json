@@ -1,0 +1,53 @@
+{
+    "maxPlayersPerMatch": 4,
+    "defaultVoteDuration": 60,
+    "minVoteDuration": 1,
+    "maxVoteDuration": 10080,
+    "timeSlots": [
+        {
+            "emoji": "🌅",
+            "time": "6:00 AM",
+            "value": "slot_6am"
+        },
+        {
+            "emoji": "🌄", 
+            "time": "8:00 AM",
+            "value": "slot_8am"
+        },
+        {
+            "emoji": "☀️",
+            "time": "10:00 AM", 
+            "value": "slot_10am"
+        },
+        {
+            "emoji": "🌞",
+            "time": "12:00 PM",
+            "value": "slot_12pm"
+        },
+        {
+            "emoji": "🌤️",
+            "time": "2:00 PM",
+            "value": "slot_2pm"
+        },
+        {
+            "emoji": "🌇",
+            "time": "4:00 PM",
+            "value": "slot_4pm"
+        },
+        {
+            "emoji": "🌆",
+            "time": "6:00 PM",
+            "value": "slot_6pm"
+        },
+        {
+            "emoji": "🌃",
+            "time": "8:00 PM",
+            "value": "slot_8pm"
+        },
+        {
+            "emoji": "🌙",
+            "time": "10:00 PM",
+            "value": "slot_10pm"
+        }
+    ]
+}

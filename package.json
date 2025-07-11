@@ -1,0 +1,22 @@
+{
+  "name": "ooc-match-scheduler",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "deploy": "node deploy-commands.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["discord", "bot", "scheduler", "match", "gaming"],
+  "author": "",
+  "license": "ISC",
+  "description": "Discord bot for scheduling gaming matches with automatic team creation",
+  "dependencies": {
+    "discord.js": "^14.21.0",
+    "dotenv": "^17.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
