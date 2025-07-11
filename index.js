@@ -63,12 +63,17 @@ const server = http.createServer((req, res) => {
             environment: {
                 node_version: process.version,
                 discord_token_set: !!process.env.DISCORD_TOKEN,
+                discord_token_length: process.env.DISCORD_TOKEN ? process.env.DISCORD_TOKEN.length : 0,
+                discord_token_starts: process.env.DISCORD_TOKEN ? process.env.DISCORD_TOKEN.substring(0, 10) + '...' : 'N/A',
+                discord_token_format_ok: process.env.DISCORD_TOKEN ? process.env.DISCORD_TOKEN.includes('.') : false,
                 client_id_set: !!process.env.CLIENT_ID,
-                guild_id_set: !!process.env.GUILD_ID
+                guild_id_set: !!process.env.GUILD_ID,
+                port: process.env.PORT || 3000
             },
             endpoints: {
                 health: '/health',
-                status: '/'
+                status: '/',
+                debug: '/debug'
             }
         }));
     }
@@ -79,17 +84,26 @@ server.listen(PORT, () => {
     console.log(`HTTP server running on port ${PORT}`);
 });
 
-// Add connection error handling
+// Add connection event handlers before login
+client.on('ready', () => {
+    console.log(`✅ Discord bot ready! Logged in as ${client.user.tag}`);
+    console.log(`📊 Connected to ${client.guilds.cache.size} guild(s)`);
+});
+
 client.on('error', (error) => {
-    console.error('Discord client error:', error);
+    console.error('❌ Discord client error:', error);
 });
 
 client.on('disconnect', () => {
-    console.log('Discord client disconnected');
+    console.log('⚠️ Discord client disconnected');
 });
 
 client.on('reconnecting', () => {
-    console.log('Discord client reconnecting...');
+    console.log('🔄 Discord client reconnecting...');
+});
+
+client.on('warn', (warning) => {
+    console.warn('⚠️ Discord warning:', warning);
 });
 
 // Login to Discord
@@ -103,12 +117,34 @@ if (!process.env.DISCORD_TOKEN) {
 }
 
 console.log('🔑 Attempting to login to Discord...');
+console.log('🔑 Token length:', process.env.DISCORD_TOKEN ? process.env.DISCORD_TOKEN.length : 0);
+console.log('🔑 Token starts with:', process.env.DISCORD_TOKEN ? process.env.DISCORD_TOKEN.substring(0, 10) + '...' : 'N/A');
+
+// Basic token validation
+if (process.env.DISCORD_TOKEN && !process.env.DISCORD_TOKEN.includes('.')) {
+    console.error('❌ Discord token appears to be malformed (missing dots)');
+    console.error('Expected format: XXXXXXXXXXXXXXXXXXXXXXXXXX.XXXXXX.XXXXXXXXXXXXXXXXXXXXXXXXXXX');
+}
+
+// Set a timeout to detect if login is hanging
+const loginTimeout = setTimeout(() => {
+    console.error('⏰ Discord login timed out after 30 seconds');
+    console.error('This might indicate network issues or an invalid token');
+}, 30000);
+
 client.login(process.env.DISCORD_TOKEN)
     .then(() => {
-        console.log('✅ Discord login successful!');
+        clearTimeout(loginTimeout);
+        console.log('✅ Discord login promise resolved!');
     })
     .catch(error => {
+        clearTimeout(loginTimeout);
         console.error('❌ Failed to login to Discord:', error);
-        console.error('Check if your DISCORD_TOKEN is correct and the bot has proper permissions.');
-        process.exit(1);
+        console.error('Error details:', error.message);
+        console.error('Error code:', error.code);
+        if (error.code === 'TOKEN_INVALID') {
+            console.error('🔑 The Discord token is invalid. Please check your token in the Render environment variables.');
+        }
+        // Don't exit immediately on Render, let it retry
+        setTimeout(() => process.exit(1), 5000);
     });
